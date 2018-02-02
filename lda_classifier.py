@@ -13,36 +13,49 @@ total_data_instances = len(lines) - 1 #150
 print(total_data_instances)
 
 #[[0 for x in range(columns)] for y in range(rows)]
-dataset_iris = [[0 for x in range(5)] for y in range(150)]
+dataset_iris = [[float(0) for x in range(5)] for y in range(150)]
 for i in range(total_data_instances):
     #split data points of each instance
     #[sepal length, sepal width, pedal length, pedal width, class]
     dataset_iris[i] = lines[i].split(",")
-
 print(dataset_iris[1][0])
 
 #separate data into 80% training and 20% testing
-iris_setosa_training = [[0 for x in range(5)] for y in range(40)]
-iris_setosa_test = [[0 for x in range(5)] for y in range(10)]
+iris_setosa_training = [[float(0) for x in range(5)] for y in range(40)]
+iris_setosa_test = [[float(0) for x in range(5)] for y in range(10)]
 
-iris_versicolor_training = [[0 for x in range(5)] for y in range(40)]
-iris_versicolor_test = [[0 for x in range(5)] for y in range(10)]
+iris_versicolor_training = [[float(0) for x in range(5)] for y in range(40)]
+iris_versicolor_test = [[float(0) for x in range(5)] for y in range(10)]
 
-iris_virginica_training = [[0 for x in range(5)] for y in range(40)]
-iris_virginica_test = [[0 for x in range(5)] for y in range(10)]
+iris_virginica_training = [[float(0) for x in range(5)] for y in range(40)]
+iris_virginica_test = [[float(0) for x in range(5)] for y in range(10)]
 
-setosa_mean = [[0 for x in range(1)] for y in range(4)]
+setosa_mean = [[float(0) for x in range(1)] for y in range(4)]
+versicolor_mean = [[float(0) for x in range(1)] for y in range(4)]
+virginica_mean = [[float(0) for x in range(1)] for y in range(4)]
 
-versicolor_mean = [[0 for x in range(1)] for y in range(4)]
+setosa_covariance = [[float(0) for x in range(4)] for y in range(4)]
+versicolor_covariance = [[float(0) for x in range(4)] for y in range(4)]
+virginica_covariance = [[float(0) for x in range(4)] for y in range(4)]
 
-virginica_mean = [[0 for x in range(1)] for y in range(4)]
+temp_matrix4by1 = [[float(0) for x in range(1)] for y in range(4)]
+temp_matrix1by4 = [[float(0) for x in range(4)] for y in range(1)]
 
+# temp_matrix4by1 = [[1],[1],[1],[1]]
+# temp_matrix1by4 = [[1, 2, 3, 4]]
+# print(np.dot(temp_matrix4by1, temp_matrix1by4))
+
+# setosa_mean = np.array((4,1)).astype(np.float)
+# versicolor_mean = np.array((4,1)).astype(np.float)
+# virginica_mean = np.array((4,1)).astype(np.float)
+
+#gather sum for the mean value and divide data accordingly
 for i in range(0, 40):
+    # setosa_mean[i] += dataset_iris[i].getT()
     setosa_mean[0][0] += float(dataset_iris[i][0])
     setosa_mean[1][0] += float(dataset_iris[i][1])
     setosa_mean[2][0] += float(dataset_iris[i][2])
     setosa_mean[3][0] += float(dataset_iris[i][3])
-    # print(setosa_mean)
     iris_setosa_training[i] = dataset_iris[i]
 
 print(setosa_mean)
@@ -51,6 +64,22 @@ setosa_mean[1][0] = float(setosa_mean[1][0]) / 40
 setosa_mean[2][0] = float(setosa_mean[2][0]) / 40
 setosa_mean[3][0] = float(setosa_mean[3][0]) / 40
 print(setosa_mean)
+
+for i in range(0, 40):
+    temp_matrix4by1[0][0] = float(dataset_iris[i][0]) - setosa_mean[0][0]
+    temp_matrix4by1[1][0] = float(dataset_iris[i][1]) - setosa_mean[1][0]
+    temp_matrix4by1[2][0] = float(dataset_iris[i][2]) - setosa_mean[2][0]
+    temp_matrix4by1[3][0] = float(dataset_iris[i][3]) - setosa_mean[3][0]
+
+    temp_matrix1by4[0][0] = float(dataset_iris[i][0]) - setosa_mean[0][0]
+    temp_matrix1by4[0][1] = float(dataset_iris[i][1]) - setosa_mean[1][0]
+    temp_matrix1by4[0][2] = float(dataset_iris[i][2]) - setosa_mean[2][0]
+    temp_matrix1by4[0][3] = float(dataset_iris[i][3]) - setosa_mean[3][0]
+
+    setosa_covariance += np.dot(temp_matrix4by1, temp_matrix1by4)
+
+setosa_covariance = setosa_covariance / 40
+print(setosa_covariance)
 
 for i in range(0, 10):
     iris_setosa_test[i] = dataset_iris[i + 40]
@@ -88,3 +117,9 @@ print(virginica_mean)
 
 for i in range(0, 10):
     iris_virginica_test[i] = dataset_iris[i + 140]
+
+# setosa_training_array = np.array(iris_setosa_training)
+#
+# setosa_mean_array = np.mean(setosa_training_array, 0)
+#
+# print(setosa_mean_array)
